@@ -1,0 +1,19 @@
+{
+    "name": "php/learn",
+    "description": "learn purpose",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "lamine diallo",
+            "email": "mlamine860@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload":{
+        "psr-4":{
+            "Application\\":"src"
+        }
+    }
+
+}

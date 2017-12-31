@@ -1,0 +1,4 @@
+#!user/bin/env php
+<?php
+echo "\033[0;36m server start in 127.0.0.1:8000\n";
+exec("php -S localhost:8000 -t public -d display_errors=1");
