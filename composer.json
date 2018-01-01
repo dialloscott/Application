@@ -9,10 +9,13 @@
             "email": "mlamine860@gmail.com"
         }
     ],
-    "require": {},
+    "require": {
+        "phpunit/phpunit": "^6.5"
+    },
     "autoload":{
         "psr-4":{
-            "Application\\":"src"
+            "Application\\":"src",
+            "Tests\\":"tests"
         }
     }
 

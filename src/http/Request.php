@@ -55,7 +55,7 @@ class Request
     /**
      * @var array
      */
-    public $attributes  = [];
+    public $attributes = [];
 
     /**
      * Request constructor.
@@ -79,13 +79,13 @@ class Request
     /**
      * @return  self
      */
-    public static function fromGlobals():self
+    public static function fromGlobals(): self
     {
         $method = isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : 'GET';
         $uri = Uri::fromGlobals();
         $headers = function_exists('getallheaders') ? getallheaders() : [];
-        $protocolVersion = isset($_SERVER['SERVER_PROTOCOL']) ? substr($_SERVER['SERVER_PROTOCOL'],5) : '1.1';
-        $request = new Request($method,$uri,$headers,'', $protocolVersion, $_SERVER);
+        $protocolVersion = isset($_SERVER['SERVER_PROTOCOL']) ? substr($_SERVER['SERVER_PROTOCOL'], 5) : '1.1';
+        $request = new Request($method, $uri, $headers, '', $protocolVersion, $_SERVER);
         return $request->withParsedBody($_POST)
             ->withCookieParams($_COOKIE)
             ->withQueryParams($_GET)
@@ -103,7 +103,7 @@ class Request
     /**
      * @return Uri
      */
-    public function getUri():Uri
+    public function getUri(): Uri
     {
         return $this->uri;
     }
@@ -180,61 +180,75 @@ class Request
         return $this->attributes;
     }
 
-    public function withMethod(string $method):self
+    public function withMethod(string $method): self
     {
         $clone = clone $this;
         $clone->method = strtoupper($method);
         return $clone;
     }
-    public function withUri(Uri $uri):self
+
+    public function withUri(Uri $uri): self
     {
         $clone = clone $this;
-        $clone->uri =  $uri;
+        $clone->uri = $uri;
         return $clone;
     }
-    public function withBody(string $body):self
+
+    public function withBody(string $body): self
     {
         $clone = clone $this;
         $clone->body = $body;
         return $clone;
     }
-    public function withCookieParams(array $cookies):self
+
+    public function withCookieParams(array $cookies): self
     {
         $clone = clone $this;
         $clone->cookieParams = $cookies;
         return $clone;
     }
-    public function withQueryParams(array $query):self
+
+    public function withQueryParams(array $query): self
     {
         $clone = clone $this;
         $clone->queryParams = $query;
         return $clone;
     }
-    public function withParsedBody(array $data):self
+
+    public function withParsedBody(array $data): self
     {
         $clone = clone $this;
         $clone->parsedBody = $data;
         return $clone;
     }
-    public function withUploadedFiles(array $files):self
+
+    public function withUploadedFiles(array $files): self
     {
         $clone = clone $this;
         $clone->uploadedFiles = $files;
         return $clone;
     }
 
-    public function withAttribute(string $name,$value):self
+    public function withAttribute(string $name, $value): self
     {
         $clone = clone $this;
-        $clone->attributes[$name] =  $value;
+        $clone->attributes[$name] = $value;
         return $clone;
     }
+
     public function getAttribute(string $name, $default = false)
     {
-        if(array_key_exists($name,$this->attributes)){
+        if (array_key_exists($name, $this->attributes)) {
             return $this->attributes[$name];
         }
         return $default;
+    }
+
+    public function withServerParams(array $serverParams): self
+    {
+        $clone = clone $this;
+        $clone->serverParams = $serverParams;
+        return $clone;
     }
 
 

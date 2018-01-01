@@ -1,4 +1,5 @@
 <?php
+
 namespace Application\http;
 
 class Uri
@@ -28,7 +29,7 @@ class Uri
      * @var  string
      */
     public $path = '/';
-    
+
     /**
      * @var  string
      */
@@ -41,9 +42,9 @@ class Uri
 
     public function __construct(string $uri = '')
     {
-        if($uri !== ''){
+        if ($uri !== '') {
             $parts = parse_url($uri);
-            if($parts === false){
+            if ($parts === false) {
                 throw new \Exception('Invalid argument, the argument most be a valid url');
             }
             $this->scheme = isset($parts['scheme']) ? $parts['scheme'] : '';
@@ -58,13 +59,13 @@ class Uri
         }
     }
 
-    public static function fromGlobals():self
+    public static function fromGlobals(): self
     {
         $uri = new self('');
         $uri->scheme = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off' ? 'https' : 'http';
-        $uri->host =  $_SERVER['SERVER_NAME'];
+        $uri->host = $_SERVER['SERVER_NAME'];
         $uri->port = $_SERVER['SERVER_PORT'];
-        $uri->path = isset($_SERVER['PATH_INFO']) ? trim($_SERVER['PATH_INFO'], '/'): trim(explode('?', $_SERVER['REQUEST_URI'],2)[0],'/');
+        $uri->path = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : explode('?', $_SERVER['REQUEST_URI'], 2)[0];
         $uri->query = isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '';
         return $uri;
     }

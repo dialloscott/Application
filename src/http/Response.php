@@ -4,7 +4,10 @@ namespace Application\http;
 
 class Response
 {
-    public static $phrases = [
+    /**
+     * @var array
+     */
+    protected static $phrases = [
         100 => 'Continue',
         101 => 'Switching Protocols',
         102 => 'Processing',
@@ -82,11 +85,11 @@ class Response
     /**
      * @var string
      */
-    private $body;
+    public $body;
     /**
      * @var string
      */
-    private $protocolVersion;
+    public $protocolVersion = '1.1';
 
     public function __construct(int $statusCode = 200, array $headers = [], string $body = '', string $protocolVersion = '1.1', string $reasonPhrase = '')
     {
@@ -99,24 +102,6 @@ class Response
         } else {
             $this->reasonPhrase = $reasonPhrase;
         }
-    }
-
-    /**
-     * Envoie tous les headers et le contenu à afficher
-     * @return void
-     */
-    public function send(): void
-    {
-        $httpLine = sprintf('HTTP/%s %s %s',
-            $this->getProtocolVersion(),
-            $this->getStatusCode(),
-            $this->getReasonPhrase()
-        );
-        header($httpLine, true, $this->getStatusCode());
-        foreach ($this->headers as $key => $value) {
-            header("$key: $value", false);
-        }
-        echo $this->body;
     }
 
     /**
@@ -141,5 +126,59 @@ class Response
     public function getStatusCode(): int
     {
         return $this->statusCode;
+    }
+
+    /**
+     * @param string $name
+     * @param $value
+     * @return Response
+     */
+    public function withHeader(string $name, $value): self
+    {
+        $clone = clone $this;
+        $clone->headers[$name] = $value;
+        return $clone;
+    }
+
+    public function withBody(string $body): self
+    {
+        $clone = clone $this;
+        $clone->body  .=  $body;
+        return $clone;
+    }
+
+    /**
+     * Envoie tous les headers et le contenu à afficher
+     * @return void
+     */
+    public function send(): void
+    {
+
+        $httpLine = sprintf('HTTP/%s %s %s',
+            $this->getProtocolVersion(),
+            $this->getStatusCode(),
+            $this->getReasonPhrase()
+        );
+        header($httpLine, true, $this->getStatusCode());
+        foreach ($this->headers as $key => $value) {
+            header("$key: $value", false);
+        }
+        echo $this->body;
+    }
+
+    /**
+     * @return array
+     */
+    public function getHeaders(): array
+    {
+        return $this->headers;
+    }
+
+    /**
+     * @return string
+     */
+    public function getBody(): string
+    {
+        return $this->body;
     }
 }
