@@ -66,9 +66,9 @@ class Uri
         $uri->host = $_SERVER['SERVER_NAME'];
         $uri->port = $_SERVER['SERVER_PORT'];
         $uri->path = isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : explode('?', $_SERVER['REQUEST_URI'], 2)[0];
-        $uri->query = isset($_SERVER['QUERY_STRING']) ? $_SERVER['QUERY_STRING'] : '';
         return $uri;
     }
+
 
     /**
      * @return string

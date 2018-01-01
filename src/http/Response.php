@@ -128,6 +128,13 @@ class Response
         return $this->statusCode;
     }
 
+    public function withStatusCode(int $status)
+    {
+        $clone = clone $this;
+        $clone->statusCode = $status;
+        return $clone;
+    }
+
     /**
      * @param string $name
      * @param $value
@@ -181,4 +188,8 @@ class Response
     {
         return $this->body;
     }
+
+
+
+
 }
