@@ -1,4 +1,4 @@
-<h1>Salut je suis la page User </h1>
+<h1>Bonjour sur je suis la page Users</h1>
 <p>
-    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Dicta, dolore voluptatum! Ab eligendi itaque nam natus nobis. Consequuntur odio perspiciatis porro possimus unde! Aliquam enim incidunt minus natus temporibus voluptates.
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam consectetur deleniti distinctio dolorum error laboriosam libero, odit provident quas quo sed tempora vitae. Commodi cumque nulla omnis quaerat qui quia.
 </p>

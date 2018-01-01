@@ -33,6 +33,16 @@ class Application
      */
     private $views = 'views';
 
+    /**
+     * @var string
+     */
+
+    private $layout = 'application';
+
+    /**
+     * Application constructor.
+     */
+
     public function __construct()
     {
         $this->router = new Router();
@@ -69,48 +79,14 @@ class Application
             $attemptFile = dirname(__DIR__) . DIRECTORY_SEPARATOR . $this->views . DIRECTORY_SEPARATOR . '404' . '.php';
         }
         ob_start();
-        require($attemptFile);
-        $body = ob_get_clean();
         $app = $this;
-        $app->request = $request;
+        require($attemptFile);
+        $content = ob_get_clean();
+        ob_start();
+        require(dirname(__DIR__).'/views/application.php');
+        $body = ob_get_clean();
         $response = $response->withBody($body);
         return $response;
-
-        /*
-        switch (trim($path, '/')) {
-            case 'users':
-                ob_start();
-                require(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . $path . '.php');
-                $body = ob_get_clean();
-                $response = new Response();
-                $response = $response->withBody($body);
-                return $response;
-            case 'home':
-                ob_start();
-                $app = $this;
-                require(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . $path . '.php');
-                $body = ob_get_clean();
-                $response = new Response();
-                $response = $response->withBody($body);
-                return $response;
-            case 'register':
-                ob_start();
-                require(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . $path . '.php');
-                $body = ob_get_clean();
-                $response = new Response();
-                $response = $response->withBody($body);
-                return $response;
-            case 'login':
-                ob_start();
-                require(dirname(__DIR__) . DIRECTORY_SEPARATOR . 'views' . DIRECTORY_SEPARATOR . $path . '.php');
-                $body = ob_get_clean();
-                $response = new Response();
-                $response = $response->withBody($body);
-                return $response;
-
-        }
-        */
-
     }
 
     /**
