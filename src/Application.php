@@ -13,6 +13,7 @@ use Application\http\{
     Request, Response
 };
 use Application\route\Route;
+use Application\route\RouteCollection;
 
 class Application
 {
@@ -28,16 +29,6 @@ class Application
      */
     private $router;
 
-    /**
-     * @var string
-     */
-    private $views = 'views';
-
-    /**
-     * @var string
-     */
-
-    private $layout = 'application';
 
     /**
      * Application constructor.
@@ -45,7 +36,7 @@ class Application
 
     public function __construct()
     {
-        $this->router = new Router();
+        $this->router = new Router(new RouteCollection());
     }
 
     /**
@@ -65,36 +56,31 @@ class Application
      */
     public function handleRequest(Request $request): Response
     {
+        $response = new Response();
         $path = $request->getUri()->getPath();
         if ($path !== '/' && $path[-1] == '/') {
-            return (new Response(301))
+            return $response
                 ->withHeader('Location', substr($path, 0, strlen($path) - 1));
         }
-        $file = dirname(__DIR__) . DIRECTORY_SEPARATOR . $this->views . $path . '.php';
-        $response = new Response();
-        if (file_exists($file)) {
-            $attemptFile = $file;
-        } else {
-            $response = $response->withStatusCode(404);
-            $attemptFile = dirname(__DIR__) . DIRECTORY_SEPARATOR . $this->views . DIRECTORY_SEPARATOR . '404' . '.php';
+        if (isset($request->getParsedBody()['_method']) &&
+            in_array($request->getParsedBody()['_method'], ['PUT', 'PATCH', 'DELETE'])) {
+            $request = $request->withMethod($request->getParsedBody()['_method']);
         }
-        ob_start();
-        $app = $this;
-        require($attemptFile);
-        $content = ob_get_clean();
-        ob_start();
-        require(dirname(__DIR__).'/views/application.php');
-        $body = ob_get_clean();
-        $response = $response->withBody($body);
+        try {
+           $response =  $this->process($request, $response);
+        }catch (\Exception $exception){
+            $response = $response->withBody($exception->getMessage());
+        }
+
         return $response;
     }
 
     /**
      * @param string $pattern
-     * @param callable $callable
+     * @param callable $callable |string
      * @return Route
      */
-    public function get(string $pattern, callable $callable): Route
+    public function get(string $pattern, $callable): Route
     {
         return $this->router->map('GET', $pattern, $callable);
     }
@@ -155,5 +141,42 @@ class Application
     public function getRouter(): Router
     {
         return $this->router;
+    }
+
+    private function process(Request $request, Response $response)
+    {
+        $uri = trim($request->getUri()->getPath(), '/');
+        $httpMethod = $request->getMethod();
+        $routeResult = $this->router->match($uri, $httpMethod);
+        if (!$routeResult->isMatched()) {
+           throw new \Exception('The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again');
+        } else {
+            $route = $routeResult->getMatched();
+            $callable = $route->getCallable();
+            $routeArgs = $route->getParameters();
+            if (!empty($routeArgs)) {
+                $request = array_reduce(array_keys($routeArgs), function ($carry, $item) use ($request, $routeArgs) {
+                    return $request->withAttribute($item, $routeArgs[$item]);
+                });
+            }
+            if (is_callable($callable)) {
+                $callableReturn = call_user_func_array($callable, [$request] + $routeArgs);
+            } else {
+                $callableReturn = '';
+                [$controller, $action] = explode('#', $callable);
+                $reflection = new \ReflectionClass($controller);
+                if ($reflection->isInstantiable()) {
+                    $callableReturn = $reflection->newInstance();
+                }
+                $callableReturn = call_user_func_array([$callableReturn, $action], [$request] + $routeArgs);
+            }
+            if ($callableReturn instanceof Response) {
+                $response = $callableReturn;
+            } else {
+                $response = $response->withBody($callableReturn);
+            }
+            return $response;
+        }
+
     }
 }

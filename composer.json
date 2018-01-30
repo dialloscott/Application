@@ -1,23 +1,25 @@
 {
-    "name": "php/learn",
-    "description": "learn purpose",
-    "type": "project",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "lamine diallo",
-            "email": "mlamine860@gmail.com"
-        }
-    ],
-    "require": {
-        "phpunit/phpunit": "^6.5"
-    },
-    "autoload":{
-        "psr-4":{
-            "Application\\":"src",
-            "Tests\\":"tests"
-        },
-        "files":["src/helpers/helpers.php"]
+  "name": "php/learn",
+  "description": "learn purpose",
+  "type": "project",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "lamine diallo",
+      "email": "mlamine860@gmail.com"
     }
-
+  ],
+  "require": {
+    "phpunit/phpunit": "^6.5"
+  },
+  "autoload": {
+    "psr-4": {
+      "Application\\": "src",
+      "App\\": "app/controllers",
+      "Tests\\": "tests"
+    },
+    "files": [
+      "src/helpers/helpers.php"
+    ]
+  }
 }
